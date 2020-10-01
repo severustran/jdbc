@@ -1,21 +1,32 @@
-import config.DatasoureConfiguration;
+import repository.model.Profile;
+import services.ProfileServices;
+import services.imple.ProfileServicesImpl;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
+import java.util.Scanner;
 
 public class Main {
-    public static void main (String[] args) throws SQLException {
-        String sql = "select * from user_profile_profile";
-        DatasoureConfiguration dt1 = new DatasoureConfiguration();
-        ResultSet rs = dt1.executeQuery(sql);
-        List<String> results = new ArrayList<>();
-        while (rs.next()) {
-            results.add(rs.getString("display_name"));
+    public static void main (String[] args) {
+        ProfileServices profileServices = new ProfileServicesImpl();
+        List<Profile> profileList = profileServices.getAllProfileNames();
+        for (int i = 1; i<=profileList.size(); i++) {
+            System.out.println(i + ". " + profileList.get(i-1).getDisplay_name());
         }
-        System.out.println(results);
+        profileList.clear();
+        System.out.println("Enter keyword to search...");
+        Scanner sc = new Scanner(System.in);
+        String input = sc.nextLine();
+        List<Profile> profileListWithInput = profileServices.getProfileNamesByInput(input);
+        if (profileListWithInput.isEmpty()) {
+            System.out.println("There is no results with your keyword!");
+        } else {
+            for (int i = 1; i <= profileListWithInput.size(); i++) {
+                System.out.print(i + " " + profileListWithInput.get(i - 1).getDisplay_name() +
+                        "\t" + profileListWithInput.get(i - 1).getBirthday() +
+                        "\t" + (profileListWithInput.get(i - 1).getGender() == "F" ? "Nam" : "Nu") +
+                        "\t" + (profileListWithInput.get(i - 1).isLecture() ? "GV" : "HV"));
+                System.out.println();
+            }
+        }
     }
 }

@@ -10,6 +10,12 @@ public final class DatasoureConfiguration {
     private final String PASS_WORD = "example";
     private final String DB_URL = "jdbc:postgresql://localhost:5433/ceb";
 
+    private static DatasoureConfiguration INSTANCE = new DatasoureConfiguration();
+
+    public static DatasoureConfiguration getDatasoure() {
+        return INSTANCE;
+    }
+
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DB_URL, USER_NAME, PASS_WORD);
     }
