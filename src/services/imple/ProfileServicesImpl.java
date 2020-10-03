@@ -3,18 +3,23 @@ package services.imple;
 import config.DatasoureConfiguration;
 import repository.model.Profile;
 import services.ProfileServices;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProfileServicesImpl implements ProfileServices {
+    private final Connection conn;
+
+    public ProfileServicesImpl() {
+        conn = DatasoureConfiguration.getDatasoure().getConnection();
+    }
+
     @Override
     public List<Profile> getAllProfileNames() {
-        List<Profile> profileList = new ArrayList<Profile>();
+        List<Profile> profileList = new ArrayList<>();
         String sql = "select * from user_profile_profile";
-        try {
-            ResultSet rs = DatasoureConfiguration.getDatasoure().executeQuery(sql);
+        try (Statement statement = conn.createStatement()) {
+            ResultSet rs = statement.executeQuery(sql);
             while (rs.next()) {
                 Profile pr = new Profile();
                 pr.setDisplay_name(rs.getString(2));
@@ -27,11 +32,12 @@ public class ProfileServicesImpl implements ProfileServices {
     }
 
     @Override
-    public List<Profile> getProfileNamesByInput(final String input) {
-        List<Profile> profileList = new ArrayList<Profile>();
-        String sql = "select * from user_profile_profile where upper(display_name) like upper('%" + input + "%')";
-        try {
-            ResultSet rs = DatasoureConfiguration.getDatasoure().executeQuery(sql);
+    public List<Profile> getProfileByDisplayName(final String displayName) {
+        List<Profile> profileList = new ArrayList<>();
+        String sql = "select * from user_profile_profile where upper(display_name) like upper(?)";
+        try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+            preparedStatement.setString(1, "%" + displayName + "%");
+            ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 Profile pr = new Profile();
                 pr.setId(rs.getString(1));
@@ -49,7 +55,8 @@ public class ProfileServicesImpl implements ProfileServices {
     }
 
     @Override
-    public void updateProfileName() {
+    public boolean isUpdatedProfileName() {
 
+        return isUpdatedProfileName();
     }
 }

@@ -16,7 +16,7 @@ public class Main {
         System.out.println("Enter keyword to search...");
         Scanner sc = new Scanner(System.in);
         String input = sc.nextLine();
-        List<Profile> profileListWithInput = profileServices.getProfileNamesByInput(input);
+        List<Profile> profileListWithInput = profileServices.getProfileByDisplayName(input);
         if (profileListWithInput.isEmpty()) {
             System.out.println("There is no results with your keyword!");
         } else {
@@ -24,7 +24,8 @@ public class Main {
                 System.out.print(i + " " + profileListWithInput.get(i - 1).getDisplay_name() +
                         "\t" + profileListWithInput.get(i - 1).getBirthday() +
                         "\t" + (profileListWithInput.get(i - 1).getGender() == "F" ? "Nam" : "Nu") +
-                        "\t" + (profileListWithInput.get(i - 1).isLecture() ? "GV" : "HV"));
+                        "\t" + (profileListWithInput.get(i - 1).isLecture() ? "GV" : "HV") +
+                        "\t" + profileListWithInput.get(i - 1).getPhone());
                 System.out.println();
             }
         }
