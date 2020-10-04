@@ -1,7 +1,9 @@
 package repository.model;
 
+import java.util.Date;
+
 public class Profile {
-    protected String id;
+    protected int id;
     protected String display_name;
     protected String birthday;
     protected String gender;
@@ -11,11 +13,11 @@ public class Profile {
     public Profile() {
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(final String id) {
+    public void setId(final int id) {
         this.id = id;
     }
 

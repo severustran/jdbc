@@ -40,7 +40,7 @@ public class ProfileServicesImpl implements ProfileServices {
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
                 Profile pr = new Profile();
-                pr.setId(rs.getString(1));
+                pr.setId(rs.getInt(1));
                 pr.setDisplay_name(rs.getString(2));
                 pr.setBirthday(rs.getString(3));
                 pr.setGender(rs.getString(4));
@@ -55,8 +55,30 @@ public class ProfileServicesImpl implements ProfileServices {
     }
 
     @Override
-    public boolean isUpdatedProfileName() {
+    public boolean isUpdatedProfileName(final Profile modifiedProfile) {
+            String sql = "update user_profile_profile set display_name = ? where id = ?";
+            int result = 0;
+            try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+                preparedStatement.setString(1, modifiedProfile.getDisplay_name());
+                preparedStatement.setInt(2, modifiedProfile.getId());
+                preparedStatement.executeUpdate();
+            } catch (SQLException sqlE) {
+                sqlE.printStackTrace();
+            }
+            return true;
+    }
 
-        return isUpdatedProfileName();
+    @Override
+    public void showModifiedProfile(final Profile preEditedProfile) {
+        System.out.println("Name: " + preEditedProfile.getDisplay_name());
+        System.out.println("DOB: " + preEditedProfile.getBirthday());
+        System.out.println("Gender: " + preEditedProfile.getGender() == "F" ? "Nam" : "Nu");
+        System.out.println("Is: " + (preEditedProfile.isLecture() ? "GV" : "HV"));
+        System.out.println("Phone: " + preEditedProfile.getPhone());
+    }
+
+    @Override
+    public String checkDifferentValue (String oldValue, String newValue) {
+        return newValue.equals("") ? oldValue : newValue;
     }
 }

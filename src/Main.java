@@ -1,7 +1,9 @@
+import org.w3c.dom.ls.LSOutput;
 import repository.model.Profile;
 import services.ProfileServices;
 import services.imple.ProfileServicesImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -9,25 +11,80 @@ public class Main {
     public static void main (String[] args) {
         ProfileServices profileServices = new ProfileServicesImpl();
         List<Profile> profileList = profileServices.getAllProfileNames();
+        Scanner sc = new Scanner(System.in);
+
         for (int i = 1; i<=profileList.size(); i++) {
             System.out.println(i + ". " + profileList.get(i-1).getDisplay_name());
         }
         profileList.clear();
+
         System.out.println("Enter keyword to search...");
-        Scanner sc = new Scanner(System.in);
         String input = sc.nextLine();
         List<Profile> profileListWithInput = profileServices.getProfileByDisplayName(input);
+        List<Profile> listOfProfileSearchResult = new ArrayList<>();
         if (profileListWithInput.isEmpty()) {
             System.out.println("There is no results with your keyword!");
         } else {
-            for (int i = 1; i <= profileListWithInput.size(); i++) {
-                System.out.print(i + " " + profileListWithInput.get(i - 1).getDisplay_name() +
-                        "\t" + profileListWithInput.get(i - 1).getBirthday() +
-                        "\t" + (profileListWithInput.get(i - 1).getGender() == "F" ? "Nam" : "Nu") +
-                        "\t" + (profileListWithInput.get(i - 1).isLecture() ? "GV" : "HV") +
-                        "\t" + profileListWithInput.get(i - 1).getPhone());
+            for (int i = 0; i < profileListWithInput.size(); i++) {
+                listOfProfileSearchResult.add(profileListWithInput.get(i));
+                System.out.print((i + 1) + " " + profileListWithInput.get(i).getDisplay_name() +
+                        "\t" + profileListWithInput.get(i).getBirthday() +
+                        "\t" + (profileListWithInput.get(i).getGender() == "F" ? "Nam" : "Nu") +
+                        "\t" + (profileListWithInput.get(i).isLecture() ? "GV" : "HV") +
+                        "\t" + profileListWithInput.get(i).getPhone());
                 System.out.println();
             }
+        }
+
+        int usersOption;
+        while (true) {
+            System.out.print("Choose record to modify, enter number: ");
+            usersOption = Integer.parseInt(sc.nextLine()) - 1;
+            if (usersOption >= 1 && usersOption <= listOfProfileSearchResult.size()) {
+                break;
+            } else {
+                System.out.println("Your number is not valid, please choose again...");
+                System.out.print("Enter number: ");
+            }
+        }
+
+        Profile newProfile = new Profile();
+        newProfile.setId(listOfProfileSearchResult.get(usersOption).getId());
+        //Name
+        System.out.println("Name: " + listOfProfileSearchResult.get(usersOption).getDisplay_name());
+        System.out.print("New name: ");
+        String newValue = sc.nextLine();
+        newProfile.setDisplay_name(profileServices.checkDifferentValue(listOfProfileSearchResult.get(usersOption).getDisplay_name(), newValue));
+//        //DOB
+//        System.out.println("DOB: " + listOfProfileSearchResult.get(usersOption).getBirthday());
+//        System.out.print("New DOB: ");
+//        newValue = sc.nextLine();
+//        newProfile.setBirthday(profileServices.checkDifferentValue(listOfProfileSearchResult.get(usersOption).getBirthday(), newValue));
+//        //Gender
+//        System.out.println("Gender: " + listOfProfileSearchResult.get(usersOption).getGender());
+//        System.out.print("New Gender (type F for Nu, M for Nam): ");
+//        newValue = sc.nextLine();
+//        newProfile.setGender(profileServices.checkDifferentValue(listOfProfileSearchResult.get(usersOption).getGender(), newValue));
+//        //Phone
+//        System.out.println("Phone: " + listOfProfileSearchResult.get(usersOption).getPhone());
+//        System.out.print("New Phone: ");
+//        newValue = sc.nextLine();
+//        newProfile.setPhone(profileServices.checkDifferentValue(listOfProfileSearchResult.get(usersOption).getPhone(), newValue));
+//        //isLecturer
+//        System.out.println("Is: " + listOfProfileSearchResult.get(usersOption).getPhone());
+//        System.out.print("Is Lecturer (True for GV, False for HV): ");
+//        newValue = sc.nextLine();
+//        newProfile.setLecture(Boolean.parseBoolean(profileServices.checkDifferentValue(listOfProfileSearchResult.get(usersOption).getPhone(), newValue)));
+        profileServices.showModifiedProfile(newProfile);
+        System.out.println("Press 1 to confirm or 0 to stop");
+        String lastOption = sc.nextLine();
+        if(lastOption.equals("1")) {
+            if(profileServices.isUpdatedProfileName(newProfile))
+                System.out.println("Updated");
+            else
+                System.out.println("Something wrong!");
+        } else {
+            System.out.println("Thank you!");
         }
     }
 }
