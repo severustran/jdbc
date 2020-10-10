@@ -4,6 +4,8 @@ import config.DatasoureConfiguration;
 import repository.model.Profile;
 import services.ProfileServices;
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,23 +58,28 @@ public class ProfileServicesImpl implements ProfileServices {
 
     @Override
     public boolean isUpdatedProfileName(final Profile modifiedProfile) {
-            String sql = "update user_profile_profile set display_name = ? where id = ?";
+            String sql = "update user_profile_profile set display_name = ?, birthday = ?, gender = ?, phone = ?, is_lecturer = ? where id = ?";
             int result = 0;
             try (PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
                 preparedStatement.setString(1, modifiedProfile.getDisplay_name());
-                preparedStatement.setInt(2, modifiedProfile.getId());
+                preparedStatement.setDate(2, Date.valueOf(modifiedProfile.getBirthday()));
+                preparedStatement.setString(3, modifiedProfile.getGender());
+                preparedStatement.setString(4, modifiedProfile.getPhone());
+                preparedStatement.setBoolean(5, modifiedProfile.isLecture());
+                preparedStatement.setInt(6, modifiedProfile.getId());
                 preparedStatement.executeUpdate();
+                return true;
             } catch (SQLException sqlE) {
                 sqlE.printStackTrace();
+                return false;
             }
-            return true;
     }
 
     @Override
     public void showModifiedProfile(final Profile preEditedProfile) {
         System.out.println("Name: " + preEditedProfile.getDisplay_name());
         System.out.println("DOB: " + preEditedProfile.getBirthday());
-        System.out.println("Gender: " + preEditedProfile.getGender() == "F" ? "Nam" : "Nu");
+        System.out.println("Gender: " + (preEditedProfile.getGender().equals("F") ? "Nu" : "Nam"));
         System.out.println("Is: " + (preEditedProfile.isLecture() ? "GV" : "HV"));
         System.out.println("Phone: " + preEditedProfile.getPhone());
     }

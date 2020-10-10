@@ -1,6 +1,8 @@
 package repository.model;
 
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class Profile {
     protected int id;
